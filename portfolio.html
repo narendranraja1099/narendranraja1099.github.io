@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Narendran Raja — Offensive Security Consultant</title>
+<meta name="description" content="Offensive Security Consultant specializing in Web, Mobile, API, and Cloud penetration testing — with specialist expertise in Automotive and Embedded Systems security.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #111111;
+    --bg-card: #0f0f0f;
+    --border: #1a1a1a;
+    --border-mid: #222222;
+    --text-primary: #f5f5f5;
+    --text-secondary: #9a9a9a;
+    --text-muted: #555555;
+    --accent: #22c55e;
+    --accent-dim: rgba(34,197,94,0.08);
+    --accent-glow: rgba(34,197,94,0.15);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --max-w: 1100px;
+    --radius: 6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 300;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── NOISE TEXTURE ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ─── GRID OVERLAY ─── */
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(34,197,94,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34,197,94,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── NAVBAR ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    transition: background 0.3s, border-color 0.3s;
+    border-bottom: 1px solid transparent;
+  }
+  nav.scrolled {
+    background: rgba(10,10,10,0.92);
+    border-bottom-color: var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .nav-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--text-muted); }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 140px 0 100px;
+    position: relative;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    font-family: var(--font-head);
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+  }
+  .hero h1 .line-dim { color: var(--text-muted); }
+  .hero-sub {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 540px;
+    line-height: 1.8;
+    margin-bottom: 48px;
+    font-weight: 300;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 14px 28px;
+    border-radius: var(--radius);
+    transition: box-shadow 0.25s, transform 0.2s;
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 24px var(--accent-glow), 0 0 48px rgba(34,197,94,0.08);
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 13px 28px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-mid);
+    transition: border-color 0.2s, color 0.2s;
+    cursor: pointer;
+  }
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Hero Terminal */
+  .hero-terminal {
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 340px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-mid);
+    border-radius: 8px;
+    overflow: hidden;
+    opacity: 0.75;
+  }
+  .terminal-header {
+    background: #161616;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  .terminal-body {
+    padding: 18px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.9;
+    color: var(--text-secondary);
+  }
+  .terminal-body .cmd { color: var(--accent); }
+  .terminal-body .out { color: #6b9e7e; }
+  .terminal-body .warn { color: #f59e0b; }
+  .cursor {
+    display: inline-block;
+    width: 7px; height: 13px;
+    background: var(--accent);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 72px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+  .stat-item {}
+  .stat-num {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: block;
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ─── SECTION COMMON ─── */
+  section { padding: 100px 0; position: relative; }
+  section.alt { background: var(--bg-secondary); }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .section-label::after {
+    content: '';
+    width: 32px; height: 1px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+  .section-title {
+    font-family: var(--font-head);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .section-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 560px;
+    margin-bottom: 64px;
+    line-height: 1.8;
+  }
+
+  /* ─── ABOUT ─── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .about-text p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.9;
+    margin-bottom: 20px;
+  }
+  .about-text p strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .about-sidebar {}
+  .info-block {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    background: var(--bg-card);
+  }
+  .info-block-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .info-block-val {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border: 1px solid var(--border-mid);
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ─── SERVICES ─── */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .service-card {
+    background: var(--bg-card);
+    padding: 36px 28px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card:hover { background: #131313; }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+  }
+  .service-icon {
+    width: 36px; height: 36px;
+    margin-bottom: 20px;
+    opacity: 0.9;
+  }
+  .service-title {
+    font-family: var(--font-head);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+  .service-desc {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 20px;
+  }
+  .service-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .service-items li {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .service-items li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ─── EXPERIENCE ─── */
+  .exp-list { display: flex; flex-direction: column; gap: 0; }
+  .exp-item {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 60px;
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .exp-item:first-child { border-top: 1px solid var(--border); }
+  .exp-meta {}
+  .exp-role {
+    font-family: var(--font-head);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .exp-company {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .exp-period {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+  .exp-body {}
+  .exp-impact {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .exp-bullets li {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 12px;
+    line-height: 1.6;
+  }
+  .exp-bullets li::before {
+    content: '▸';
+    color: var(--accent);
+    flex-shrink: 0;
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  /* ─── CASE STUDIES ─── */
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .case-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    transition: border-color 0.25s, transform 0.2s;
+    position: relative;
+  }
+  .case-card:hover {
+    border-color: #2a2a2a;
+    transform: translateY(-2px);
+  }
+  .case-card.featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+    padding: 40px;
+  }
+  .case-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(34,197,94,0.2);
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    display: inline-block;
+    background: var(--accent-dim);
+  }
+  .case-title {
+    font-family: var(--font-head);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+  .case-desc {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 24px;
+  }
+  .case-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .case-meta-item {}
+  .case-meta-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .case-meta-val {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .case-outcome {
+    margin-top: 24px;
+    padding: 16px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(34,197,94,0.12);
+    border-radius: 4px;
+  }
+  .case-outcome-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .case-outcome-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ─── TOOLS ─── */
+  .tools-wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .tool-group {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 24px;
+  }
+  .tool-group-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tool-item {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s, padding-left 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tool-item:last-child { border-bottom: none; }
+  .tool-item::before {
+    content: '';
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+  .tool-item:hover { color: var(--text-primary); padding-left: 4px; }
+  .tool-item:hover::before { opacity: 1; }
+
+  /* ─── CERTIFICATIONS ─── */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .cert-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+  .cert-card:hover { border-color: var(--border-mid); }
+  .cert-icon {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(34,197,94,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .cert-info {}
+  .cert-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .cert-org {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ─── CONTACT ─── */
+  .contact-inner {
+    max-width: 700px;
+  }
+  .contact-title {
+    font-family: var(--font-head);
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .contact-title .accent { color: var(--accent); }
+  .contact-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 48px;
+    max-width: 520px;
+  }
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    max-width: 400px;
+  }
+  .contact-link:hover {
+    color: var(--accent);
+    border-color: rgba(34,197,94,0.3);
+  }
+  .contact-link-icon {
+    width: 16px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .avail-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    padding: 8px 16px;
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 100px;
+    background: var(--accent-dim);
+  }
+  .avail-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+  .footer-links a {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-mid) 30%, var(--border-mid) 70%, transparent);
+    margin: 0;
+  }
+
+  /* ─── SCROLL ANIMATIONS ─── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── MOBILE NAV HAMBURGER ─── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 22px; height: 1.5px;
+    background: var(--text-secondary);
+    transition: background 0.2s;
+  }
+  .hamburger:hover span { background: var(--accent); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .hero-terminal { display: none; }
+    .hero h1 { font-size: clamp(36px, 10vw, 64px); }
+    .hero-stats { gap: 28px; }
+    .about-grid { grid-template-columns: 1fr; gap: 48px; }
+    .services-grid { grid-template-columns: 1fr 1fr; }
+    .exp-item { grid-template-columns: 1fr; gap: 20px; }
+    .cases-grid { grid-template-columns: 1fr; }
+    .case-card.featured { grid-template-columns: 1fr; gap: 24px; }
+    .tools-wrapper { grid-template-columns: repeat(2, 1fr); }
+    .certs-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .container { padding: 0 20px; }
+    .nav-inner { padding: 16px 20px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .tools-wrapper { grid-template-columns: 1fr; }
+    .certs-grid { grid-template-columns: 1fr; }
+    .hero-stats { flex-wrap: wrap; gap: 24px; }
+    .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+  }
+
+  /* ─── SCANLINE ACCENT ─── */
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--accent) 20%, var(--accent) 80%, transparent 100%);
+    opacity: 0.12;
+  }
+
+  /* ─── SECTION NUMBER ─── */
+  .section-num {
+    font-family: var(--font-mono);
+    font-size: 80px;
+    font-weight: 800;
+    color: var(--border);
+    position: absolute;
+    right: 32px; top: 80px;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.05em;
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-overlay"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#home" class="nav-logo">nr<span>@</span>sec<span>:~$</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="container" style="width:100%;">
+    <div class="hero-tag">Offensive Security Consultant</div>
+    <h1 class="fade-in">
+      Narendran<br>
+      <span class="line-dim">Raja.</span>
+    </h1>
+    <p class="hero-sub fade-in" style="transition-delay:0.1s;">
+      Penetration testing across Web, Mobile, API, and Cloud — with specialist expertise in Automotive ECUs and Embedded Systems.
+    </p>
+    <div class="hero-ctas fade-in" style="transition-delay:0.2s;">
+      <a href="#contact" class="btn-primary">
+        Work With Me
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#work" class="btn-outline">View Case Studies</a>
+    </div>
+
+    <div class="hero-stats fade-in" style="transition-delay:0.3s;">
+      <div class="stat-item">
+        <span class="stat-num">5+</span>
+        <span class="stat-label">Years in Offensive Security</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">6</span>
+        <span class="stat-label">Security Domains</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">20+</span>
+        <span class="stat-label">Engagements Delivered</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" style="font-size:15px; line-height:1.5;">OWASP<br><span style="color:var(--text-muted); font-size:12px; font-family:var(--font-mono);">ISO/SAE 21434</span></span>
+        <span class="stat-label">Standards Aligned</span>
+      </div>
+    </div>
+
+    <!-- TERMINAL WIDGET -->
+    <div class="hero-terminal fade-in" style="transition-delay:0.4s; position:absolute; right:0; top:50%; transform:translateY(-50%);">
+      <div class="terminal-header">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div class="terminal-body">
+        <div><span class="cmd">$</span> whoami</div>
+        <div class="out">narendran_raja</div>
+        <div style="margin-top:8px;"><span class="cmd">$</span> cat specialization.txt</div>
+        <div class="out">→ Web / API / Mobile</div>
+        <div class="out">→ Cloud / IoT / Embedded</div>
+        <div class="out">→ Automotive / ECU / Firmware</div>
+        <div style="margin-top:8px;"><span class="cmd">$</span> ls certifications/</div>
+        <div class="out">CEH&nbsp;&nbsp;CRTP&nbsp;&nbsp;eJPT</div>
+        <div style="margin-top:8px;"><span class="cmd">$</span> cat status.txt</div>
+        <div class="warn">● Available for engagements</div>
+        <div style="margin-top:8px;"><span class="cmd">$</span> <span class="cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="alt" id="about" style="position:relative; overflow:hidden;">
+  <div class="section-num">01</div>
+  <div class="container">
+    <div class="section-label">About</div>
+    <h2 class="section-title">Engagement Areas &<br>Professional Background.</h2>
+    <div class="about-grid">
+      <div class="about-text fade-in">
+        <p>
+          <strong>5+ years of hands-on offensive security experience</strong> across web, mobile, API, cloud, automotive, and embedded domains. Not a generalist — a practitioner who operates with depth across each attack surface.
+        </p>
+        <p>
+          Primary focus spans enterprise-grade <strong>web application, mobile (Android &amp; iOS), API, and cloud security assessments</strong> — delivered across multiple client environments in the IT sector. Methodology is manual-first with targeted automation. The goal is to find what scanners miss, not to validate what they already flag.
+        </p>
+        <p>
+          Secondary specialization in <strong>automotive cybersecurity</strong> — working at the protocol level across CAN, LIN, and Automotive Ethernet; testing ECUs under black-box and grey-box conditions; and applying firmware reverse engineering where conventional tooling is insufficient. This domain experience is a differentiator, not a side note.
+        </p>
+        <p>
+          Findings are documented to drive real remediation — clear reproduction steps, risk-prioritized impact, and developer-ready mitigations. Every engagement closes with <strong>actionable output, not padded reports</strong>. Standards aligned: OWASP, PTES, and ISO/SAE 21434 where applicable.
+        </p>
+      </div>
+      <div class="about-sidebar fade-in" style="transition-delay:0.15s;">
+        <div class="info-block">
+          <div class="info-block-label">Focus Areas</div>
+          <div class="tag-list">
+            <span class="tag">Web VAPT</span>
+            <span class="tag">API Security</span>
+            <span class="tag">Mobile (Android/iOS)</span>
+            <span class="tag">Cloud Misconfig</span>
+            <span class="tag">Automotive ECU</span>
+            <span class="tag">Firmware RE</span>
+            <span class="tag">IoT</span>
+            <span class="tag">Embedded</span>
+          </div>
+        </div>
+        <div class="info-block">
+          <div class="info-block-label">Standards & Compliance Awareness</div>
+          <div class="info-block-val" style="display:flex; flex-direction:column; gap:7px; margin-top:2px;">
+            <span style="color:var(--text-primary); font-weight:500;">OWASP Top 10 — Web Application Security</span>
+            <span style="color:var(--text-primary); font-weight:500;">OWASP Mobile Top 10 — Android &amp; iOS</span>
+            <span style="color:var(--text-primary); font-weight:500;">OWASP API Security Top 10</span>
+            <span>ISO/IEC 27001 — Information Security Management</span>
+            <span>PTES · NIST CSF · Risk-based testing approach</span>
+            <span style="color:var(--text-secondary);">ISO/SAE 21434 — Automotive Cybersecurity Engineering</span>
+          </div>
+        </div>
+        <div class="info-block">
+          <div class="info-block-label">Engagement Types</div>
+          <div class="info-block-val">Black-box · Grey-box · White-box · Freelance · Consulting</div>
+        </div>
+        <div class="info-block">
+          <div class="info-block-label">Availability</div>
+          <div class="info-block-val" style="display:flex; align-items:center; gap:10px;">
+            <div class="avail-dot"></div>
+            Open to freelance and consulting engagements
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" style="position:relative; overflow:hidden;">
+  <div class="section-num">02</div>
+  <div class="container">
+    <div class="section-label">Services</div>
+    <h2 class="section-title">What I Test.</h2>
+    <p class="section-desc">Each engagement is scoped, executed, and reported with precision. No templates. No automated-only outputs.</p>
+
+    <div class="services-grid fade-in">
+      <!-- Web — PRIMARY 01 -->
+      <div class="service-card">
+        <div class="service-num">01</div>
+        <svg class="service-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="6" width="28" height="24" rx="3" stroke="#22c55e" stroke-width="1.5"/>
+          <path d="M4 12h28" stroke="#22c55e" stroke-width="1.5"/>
+          <circle cx="9" cy="9" r="1.5" fill="#22c55e"/>
+          <circle cx="14" cy="9" r="1.5" fill="#22c55e"/>
+          <path d="M10 20l4 4 8-8" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="service-title">Web Application Security</div>
+        <div class="service-desc">OWASP-based manual testing with deep business logic analysis. Finding what automated scanners consistently miss — across single domains and multi-subdomain scopes.</div>
+        <ul class="service-items">
+          <li>OWASP Top 10 full coverage</li>
+          <li>Business logic and workflow exploitation</li>
+          <li>Authentication bypass, session fixation, CSRF</li>
+          <li>SSRF, XXE, SQLi, Blind SQLi, XSS, SSTI</li>
+          <li>Insecure Direct Object Reference (IDOR)</li>
+          <li>File upload bypass and path traversal</li>
+          <li>Subdomain enumeration and attack surface mapping</li>
+          <li>Clickjacking, open redirect, security misconfiguration</li>
+        </ul>
+      </div>
+
+      <!-- Mobile — PRIMARY 02 -->
+      <div class="service-card">
+        <div class="service-num">02</div>
+        <svg class="service-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="3" width="16" height="30" rx="3" stroke="#22c55e" stroke-width="1.5"/>
+          <circle cx="18" cy="28" r="1.5" fill="#22c55e"/>
+          <path d="M14 8h8" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="service-title">Mobile Application Security</div>
+        <div class="service-desc">Static and dynamic analysis on Android and iOS applications. Runtime instrumentation, data exposure, insecure backend coupling, and platform-specific attack surface coverage.</div>
+        <ul class="service-items">
+          <li>Static analysis — APK/IPA decompilation and code review</li>
+          <li>Dynamic analysis — Frida instrumentation and runtime hooking</li>
+          <li>SSL pinning and root / jailbreak detection bypass</li>
+          <li>Hardcoded secrets, tokens, and insecure local storage</li>
+          <li>Improper session handling and authentication flaws</li>
+          <li>Deep link and intent hijacking (Android)</li>
+          <li>WebView attack surface and JavaScript bridge abuse</li>
+          <li>OWASP Mobile Top 10 / MASVS aligned</li>
+        </ul>
+      </div>
+
+      <!-- API — PRIMARY 03 -->
+      <div class="service-card">
+        <div class="service-num">03</div>
+        <svg class="service-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 18h6M24 18h6M18 6v6M18 24v6" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="18" cy="18" r="5" stroke="#22c55e" stroke-width="1.5"/>
+          <path d="M12 12l4.5 4.5M19.5 19.5L24 24M24 12l-4.5 4.5M12.5 19.5L8 24" stroke="#22c55e" stroke-width="1" opacity="0.4"/>
+        </svg>
+        <div class="service-title">API Security Testing</div>
+        <div class="service-desc">REST and GraphQL endpoints tested for broken access control, mass assignment, data exposure, and abuse-path exploitation. Covers both authenticated and unauthenticated attack surfaces.</div>
+        <ul class="service-items">
+          <li>Broken Object Level Authorization (BOLA / IDOR)</li>
+          <li>Broken Function Level Authorization</li>
+          <li>Broken authentication and JWT flaws</li>
+          <li>Mass assignment and parameter pollution</li>
+          <li>GraphQL introspection, batching, and injection</li>
+          <li>Excessive data exposure and response filtering bypass</li>
+          <li>Rate limiting bypass and resource abuse</li>
+          <li>OWASP API Security Top 10 coverage</li>
+        </ul>
+      </div>
+
+      <!-- Cloud — PRIMARY 04 -->
+      <div class="service-card">
+        <div class="service-num">04</div>
+        <svg class="service-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 24a6 6 0 010-12 6 6 0 0111.6-1.6A4 4 0 1126 24H10z" stroke="#22c55e" stroke-width="1.5"/>
+        </svg>
+        <div class="service-title">Cloud Security Assessment</div>
+        <div class="service-desc">Misconfiguration audits and privilege escalation path analysis across AWS, GCP, and Azure environments.</div>
+        <ul class="service-items">
+          <li>Cloud misconfiguration review (AWS/GCP/Azure)</li>
+          <li>IAM privilege escalation path enumeration</li>
+          <li>Exposed storage and service discovery</li>
+          <li>Network segmentation and trust boundary review</li>
+          <li>Risk-based remediation prioritization</li>
+        </ul>
+      </div>
+
+      <!-- Automotive — SECONDARY 05 -->
+      <div class="service-card">
+        <div class="service-num">05</div>
+        <svg class="service-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="12" width="28" height="14" rx="3" stroke="#22c55e" stroke-width="1.5"/>
+          <path d="M8 12L11 6h14l3 6" stroke="#22c55e" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="10" cy="26" r="3" stroke="#22c55e" stroke-width="1.5"/>
+          <circle cx="26" cy="26" r="3" stroke="#22c55e" stroke-width="1.5"/>
+          <path d="M14 18h8" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="service-title">Automotive Security Testing</div>
+        <div class="service-desc">ECU-level penetration testing across multiple automotive communication protocols and architectures. From diagnostic interfaces to telematics attack surfaces.</div>
+        <ul class="service-items">
+          <li>ECU penetration testing (TCU, PEPS, clusters, cameras, LiDAR, RADAR)</li>
+          <li>CAN, LIN, and Automotive Ethernet — protocol and ECU level assessment</li>
+          <li>UDS diagnostic interface fuzzing, secure access, and secure boot analysis</li>
+          <li>Firmware reverse engineering — ARM, RH850, and x86 architectures</li>
+          <li>Spoofing, replay, and DoS at the protocol layer</li>
+          <li>ISO/SAE 21434 aligned assessments and TARA</li>
+        </ul>
+      </div>
+
+      <!-- IoT & Embedded — SECONDARY 06 -->
+      <div class="service-card">
+        <div class="service-num">06</div>
+        <svg class="service-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="8" width="20" height="20" rx="2" stroke="#22c55e" stroke-width="1.5"/>
+          <rect x="13" y="13" width="10" height="10" rx="1" stroke="#22c55e" stroke-width="1.5"/>
+          <path d="M13 4v4M23 4v4M13 28v4M23 28v4M4 13h4M4 23h4M28 13h4M28 23h4" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="service-title">IoT & Embedded Device Security</div>
+        <div class="service-desc">Device-level attack surface analysis covering firmware extraction, debug interface exposure, and insecure communication channels.</div>
+        <ul class="service-items">
+          <li>Firmware extraction and static binary analysis</li>
+          <li>JTAG/UART debug interface enumeration</li>
+          <li>Hardcoded credential and secret discovery</li>
+          <li>Insecure update mechanism analysis</li>
+          <li>Cloud backend coupling and trust boundary review</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="alt" id="experience" style="position:relative; overflow:hidden;">
+  <div class="section-num">03</div>
+  <div class="container">
+    <div class="section-label">Experience</div>
+    <h2 class="section-title">Where I've Operated.</h2>
+
+    <div class="exp-list">
+      <!-- Valeo — Most Recent -->
+      <div class="exp-item fade-in">
+        <div class="exp-meta">
+          <div class="exp-role">Offensive Security Analyst</div>
+          <span class="exp-company">Valeo India</span>
+          <span class="exp-period">2024 — Present</span>
+        </div>
+        <div class="exp-body">
+          <p class="exp-impact">Embedded within a Tier-1 automotive supplier, conducting security assessments on production-bound ECUs and vehicle communication systems prior to OEM integration.</p>
+          <ul class="exp-bullets">
+            <li>Performed penetration testing on automotive ECUs including TCU, Virtual Cluster, Welcome Lamp, Key Fob (PEPS), Front Camera, LiDAR, RADAR, and Audio (AUD) modules</li>
+            <li>Assessed security across automotive communication protocols — CAN, LIN, and Automotive Ethernet — at both protocol and ECU level</li>
+            <li>Executed firmware reverse engineering and binary analysis on ARM-based targets using Ghidra and GDB</li>
+            <li>Delivered TARA-aligned vulnerability analysis with prioritized mitigation strategies per ISO/SAE 21434</li>
+            <li>Developed custom fuzzing test cases for ECU diagnostic interfaces (UDS over CAN)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tata Elxsi — 2022-2024 -->
+      <div class="exp-item fade-in" style="transition-delay:0.16s;">
+        <div class="exp-meta">
+          <div class="exp-role">Cybersecurity Engineer</div>
+          <span class="exp-company">Tata Elxsi</span>
+          <span class="exp-period">2022 — 2024</span>
+        </div>
+        <div class="exp-body">
+          <p class="exp-impact">Security engineering role spanning both automotive and enterprise domains — threat modeling, VAPT execution, and security integration across software development lifecycles.</p>
+          <ul class="exp-bullets">
+            <li>Performed web application and API VAPT engagements for enterprise clients using manual testing methodologies</li>
+            <li>Executed mobile application security assessments (Android) covering static and dynamic analysis pipelines</li>
+            <li>Contributed to cybersecurity concept and system design documentation for connected vehicle programs</li>
+            <li>Supported threat analysis and risk assessment (TARA) for in-vehicle network architectures</li>
+            <li>Produced detailed vulnerability reports with exploitability context and developer-ready remediation guidance</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SMHR — 2021-2022 -->
+      <div class="exp-item fade-in" style="transition-delay:0.24s;">
+        <div class="exp-meta">
+          <div class="exp-role">Information Security Analyst</div>
+          <span class="exp-company">SMHR Services Pvt. Ltd.</span>
+          <span class="exp-period">2021 — 2022</span>
+        </div>
+        <div class="exp-body">
+          <p class="exp-impact">IT security role delivering vulnerability assessment and penetration testing across web and mobile platforms for multiple enterprise client environments.</p>
+          <ul class="exp-bullets">
+            <li>Performed vulnerability assessment and penetration testing on web and mobile applications across multiple client environments</li>
+            <li>Conducted black-box and grey-box security testing engagements with varying levels of access and context</li>
+            <li>Delivered structured vulnerability reports with reproduction steps, impact analysis, and mitigation strategies</li>
+            <li>Operated across diverse IT environments — adapting methodology and tooling per client scope and risk profile</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CASE STUDIES -->
+<section id="work" style="position:relative; overflow:hidden;">
+  <div class="section-num">04</div>
+  <div class="container">
+    <div class="section-label">Case Studies</div>
+    <h2 class="section-title">Selected Engagements.</h2>
+    <p class="section-desc">All client details are confidential. Sanitized summaries reflect real engagement structure and outcomes. Tools listed are primary instruments used — additional tooling is applied as conditions require throughout each engagement.</p>
+
+    <div class="cases-grid">
+      <!-- Featured: Web VAPT — IT FIRST -->
+      <div class="case-card featured fade-in">
+        <div>
+          <div class="case-badge">Web Application · Featured</div>
+          <div class="case-title">Enterprise Web Application VAPT</div>
+          <div class="case-desc">Manual penetration test on a production-grade SaaS platform processing financial transactions. Grey-box engagement with access to application documentation but no source code. Coverage spanned authentication flows, session management, business logic, and backend API coupling.</div>
+          <div class="case-outcome">
+            <div class="case-outcome-label">Outcome</div>
+            <div class="case-outcome-text">Discovered critical authentication bypass, stored XSS in the admin panel, and SQL injection in a legacy search endpoint. Delivered 6 high-severity and 4 medium findings with full reproduction steps and developer-ready mitigations.</div>
+          </div>
+        </div>
+        <div>
+          <div class="case-meta-grid">
+            <div class="case-meta-item">
+              <div class="case-meta-label">Target</div>
+              <div class="case-meta-val">Production SaaS platform (client confidential)</div>
+            </div>
+            <div class="case-meta-item">
+              <div class="case-meta-label">Testing Type</div>
+              <div class="case-meta-val">Grey-box penetration test</div>
+            </div>
+            <div class="case-meta-item">
+              <div class="case-meta-label">Methodology</div>
+              <div class="case-meta-val">Manual-first, OWASP Top 10, business logic analysis</div>
+            </div>
+            <div class="case-meta-item">
+              <div class="case-meta-label">Tools</div>
+              <div class="case-meta-val">Burp Suite Pro, SQLMap, Nessus</div>
+            </div>
+            <div class="case-meta-item">
+              <div class="case-meta-label">Standard</div>
+              <div class="case-meta-val">OWASP Top 10 · PTES</div>
+            </div>
+            <div class="case-meta-item">
+              <div class="case-meta-label">Duration</div>
+              <div class="case-meta-val">~40 hrs (single domain) — timeline scales with subdomain scope</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IT Case 2: Mobile + API -->
+      <div class="case-card fade-in" style="transition-delay:0.08s;">
+        <div class="case-badge">Mobile · API</div>
+        <div class="case-title">Android App & REST API Security Testing</div>
+        <div class="case-desc">Combined static and dynamic security assessment of an Android application and its REST API backend. Grey-box engagement with partial documentation access. Testing focused on runtime manipulation, insecure data handling, and API trust boundary violations.</div>
+        <div class="case-meta-grid" style="margin-bottom:16px;">
+          <div class="case-meta-item">
+            <div class="case-meta-label">Target</div>
+            <div class="case-meta-val">Android app + REST API backend (client confidential)</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Testing Type</div>
+            <div class="case-meta-val">Grey-box — static + dynamic</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Methodology</div>
+            <div class="case-meta-val">OWASP Mobile Top 10 · API Security Top 10</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Tools</div>
+            <div class="case-meta-val">MobSF, Frida, Drozer, Burp Suite Pro, Postman + others as required</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Duration</div>
+            <div class="case-meta-val">~25 hrs</div>
+          </div>
+        </div>
+        <div class="case-outcome">
+          <div class="case-outcome-label">Outcome</div>
+          <div class="case-outcome-text">Identified insecure API endpoints returning full user objects (BOLA/IDOR), hardcoded API keys in the APK, and bypassed SSL pinning to capture sensitive data in transit. 5 high, 7 medium findings delivered with reproduction steps.</div>
+        </div>
+      </div>
+
+      <!-- IT Case 3: Cloud + IoT -->
+      <div class="case-card fade-in" style="transition-delay:0.12s;">
+        <div class="case-badge">Cloud · IoT</div>
+        <div class="case-title">IoT Device & Cloud Backend Security Review</div>
+        <div class="case-desc">Grey-box attack surface assessment across an IoT embedded device and its AWS-hosted backend. Scope covered device authentication, data-in-transit integrity, firmware exposure, and cloud-side configuration weaknesses.</div>
+        <div class="case-meta-grid" style="margin-bottom:16px;">
+          <div class="case-meta-item">
+            <div class="case-meta-label">Target</div>
+            <div class="case-meta-val">IoT device + AWS backend (client confidential)</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Testing Type</div>
+            <div class="case-meta-val">Grey-box — device + network + cloud</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Methodology</div>
+            <div class="case-meta-val">Cloud misconfiguration review, device trust boundary analysis, firmware inspection</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Tools</div>
+            <div class="case-meta-val">Nessus, Wireshark, Scout Suite, Prowler, Binwalk, AWS CLI + others as required</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Duration</div>
+            <div class="case-meta-val">~40 hrs</div>
+          </div>
+        </div>
+        <div class="case-outcome">
+          <div class="case-outcome-label">Outcome</div>
+          <div class="case-outcome-text">Discovered publicly accessible S3 buckets containing device logs, overly permissive IAM roles, absence of mutual TLS on device communication channels, and hardcoded credentials within the device firmware. 4 critical misconfigurations remediated post-engagement.</div>
+        </div>
+      </div>
+
+      <!-- Automotive Case 4: ECU Assessment -->
+      <div class="case-card fade-in" style="transition-delay:0.08s;">
+        <div class="case-badge">Automotive · ECU</div>
+        <div class="case-title">ECU Security Assessment</div>
+        <div class="case-desc">Grey-box protocol-level and diagnostic-layer penetration test of a production-bound automotive ECU. Testing conducted on an embedded test bench under pre-OEM integration conditions with access to ECU documentation and signal databases.</div>
+        <div class="case-meta-grid" style="margin-bottom:16px;">
+          <div class="case-meta-item">
+            <div class="case-meta-label">Target</div>
+            <div class="case-meta-val">Automotive ECU (OEM confidential)</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Testing Type</div>
+            <div class="case-meta-val">Grey-box — protocol + diagnostic layer</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Methodology</div>
+            <div class="case-meta-val">CAN/LIN/Automotive Ethernet protocol fuzzing · UDS layer fuzzing · Secure boot analysis · Secure access &amp; secure debug testing · Spoofing, replay, and DoS at protocol level</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Tools</div>
+            <div class="case-meta-val">CANoe, PCAN, Vehicle Spy, Ghidra, custom Python scripts + others as required</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Duration</div>
+            <div class="case-meta-val">~100 hrs</div>
+          </div>
+        </div>
+        <div class="case-outcome">
+          <div class="case-outcome-label">Outcome</div>
+          <div class="case-outcome-text">Identified unauthenticated diagnostic command execution, weak secure access seed-key implementation, missing validation in OTA update routines, and susceptibility to replay attacks on the CAN bus. ISO/SAE 21434-aligned findings report delivered with structured mitigation roadmap.</div>
+        </div>
+      </div>
+
+      <!-- Automotive Case 5: Firmware RE -->
+      <div class="case-card fade-in" style="transition-delay:0.12s;">
+        <div class="case-badge">Automotive · Firmware</div>
+        <div class="case-title">Firmware Reverse Engineering</div>
+        <div class="case-desc">Static reverse engineering and binary analysis of automotive firmware images. Grey-box engagement with firmware file provided directly — no physical hardware access required. Objective: identify hardcoded credentials, insecure boot chain, exposed debug interfaces, and unsafe update mechanisms.</div>
+        <div class="case-meta-grid" style="margin-bottom:16px;">
+          <div class="case-meta-item">
+            <div class="case-meta-label">Target</div>
+            <div class="case-meta-val">Firmware image files (BIN, ELF, HEX) — OEM confidential</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Testing Type</div>
+            <div class="case-meta-val">Grey-box — static binary analysis</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Methodology</div>
+            <div class="case-meta-val">Firmware unpacking, disassembly, string extraction, crypto analysis, boot chain inspection</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Tools</div>
+            <div class="case-meta-val">Ghidra, IDA Pro, Binary Ninja, Binwalk + others as required</div>
+          </div>
+          <div class="case-meta-item">
+            <div class="case-meta-label">Duration</div>
+            <div class="case-meta-val">~25 hrs</div>
+          </div>
+        </div>
+        <div class="case-outcome">
+          <div class="case-outcome-label">Outcome</div>
+          <div class="case-outcome-text">Identified hardcoded credentials, an unsigned firmware update process, and weak cryptographic key storage. Remediation guidance delivered aligned with UNECE WP.29 requirements.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="alt" id="tools" style="position:relative; overflow:hidden;">
+  <div class="section-num">05</div>
+  <div class="container">
+    <div class="section-label">Tools & Technology</div>
+    <h2 class="section-title">The Toolchain.</h2>
+    <p class="section-desc">The methodology drives the tooling — not the other way around. Tools listed represent the core stack. Additional and custom tooling is applied based on engagement scope, target architecture, and conditions encountered.</p>
+
+    <div class="tools-wrapper fade-in">
+      <div class="tool-group">
+        <div class="tool-group-title">Web & API</div>
+        <div class="tool-item">Burp Suite Pro</div>
+        <div class="tool-item">Metasploit Framework</div>
+        <div class="tool-item">Nessus</div>
+        <div class="tool-item">SQLMap</div>
+        <div class="tool-item">Postman</div>
+      </div>
+      <div class="tool-group">
+        <div class="tool-group-title">Mobile</div>
+        <div class="tool-item">MobSF</div>
+        <div class="tool-item">Frida</div>
+        <div class="tool-item">Drozer</div>
+      </div>
+      <div class="tool-group">
+        <div class="tool-group-title">Reverse Engineering</div>
+        <div class="tool-item">Ghidra</div>
+        <div class="tool-item">IDA Pro</div>
+        <div class="tool-item">Binary Ninja</div>
+      </div>
+      <div class="tool-group">
+        <div class="tool-group-title">Automotive</div>
+        <div class="tool-item">CANoe</div>
+        <div class="tool-item">PCAN / PEAK</div>
+        <div class="tool-item">Vehicle Spy</div>
+        <div class="tool-item">Custom Python Scripts</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certs" style="position:relative; overflow:hidden;">
+  <div class="section-num">06</div>
+  <div class="container">
+    <div class="section-label">Credentials</div>
+    <h2 class="section-title">Certifications & Recognition.</h2>
+
+    <div class="certs-grid fade-in">
+      <div class="cert-card">
+        <div class="cert-icon">CEH</div>
+        <div class="cert-info">
+          <div class="cert-name">Certified Ethical Hacker</div>
+          <div class="cert-org">EC-Council</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">CRTP</div>
+        <div class="cert-info">
+          <div class="cert-name">Certified Red Team Professional</div>
+          <div class="cert-org">Altered Security</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">eJPT</div>
+        <div class="cert-info">
+          <div class="cert-name">eLearnSecurity Junior Penetration Tester</div>
+          <div class="cert-org">eLearnSecurity / INE</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">HTB</div>
+        <div class="cert-info">
+          <div class="cert-name">HackTheBox — Hacker Rank</div>
+          <div class="cert-org">HackTheBox Platform</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">VDP</div>
+        <div class="cert-info">
+          <div class="cert-name">Vulnerability Disclosure Recognition</div>
+          <div class="cert-org">Responsible Disclosure Program</div>
+        </div>
+      </div>
+      <div class="cert-card" style="border-style: dashed; opacity:0.5;">
+        <div class="cert-icon" style="opacity:0.5;">+</div>
+        <div class="cert-info">
+          <div class="cert-name">Pursuing: OSCP</div>
+          <div class="cert-org">Offensive Security</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="alt" id="contact" style="position:relative; overflow:hidden; border-top: 1px solid var(--border);">
+  <div class="section-num">07</div>
+  <div class="container">
+    <div class="section-label">Contact</div>
+    <div class="contact-inner">
+      <h2 class="contact-title fade-in">
+        Have a system to<br>
+        test or <span class="accent">secure?</span>
+      </h2>
+      <p class="contact-desc fade-in" style="transition-delay:0.1s;">
+        I work with companies who take security seriously — not those looking for a checkbox. If you have a real attack surface and need a practitioner who will actually find what matters, book a call directly or reach out via email.
+      </p>
+
+      <div class="avail-badge fade-in" style="transition-delay:0.15s; margin-bottom:36px;">
+        <div class="avail-dot"></div>
+        Available for freelance and consulting engagements
+      </div>
+
+      <div class="contact-links fade-in" style="transition-delay:0.2s;">
+        <a href="mailto:narendranraja@proton.me" class="contact-link">
+          <svg class="contact-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          narendranraja@proton.me
+        </a>
+        <a href="https://linkedin.com/in/narendranraja" target="_blank" class="contact-link">
+          <svg class="contact-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          linkedin.com/in/narendranraja
+        </a>
+      </div>
+
+      <div class="fade-in" style="transition-delay:0.25s;">
+        <a href="https://cal.eu/narendranraja" target="_blank" class="btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Schedule a Call
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">© 2025 Narendran Raja — All rights reserved.</div>
+    <ul class="footer-links">
+      <li><a href="#home">Top</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+  // Navbar scroll effect
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 40) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+
+  // Scroll fade-in animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Mobile menu toggle
+  function toggleMenu(btn) {
+    const links = document.querySelector('.nav-links');
+    links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.right = '20px';
+    links.style.background = '#111111';
+    links.style.border = '1px solid #1a1a1a';
+    links.style.borderRadius = '8px';
+    links.style.padding = '16px 24px';
+    links.style.gap = '16px';
+  }
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // Trigger visible for elements in viewport on load
+  setTimeout(() => {
+    document.querySelectorAll('.fade-in').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        el.classList.add('visible');
+      }
+    });
+  }, 100);
+</script>
+</body>
+</html>
